@@ -9,7 +9,7 @@ from mysql.connector import errorcode
 def test_connect():
     try:
         cnx = mysql.connector.connect(user='tripit_demo',
-                                      password='',
+                                      password=' ',
                                       database='tripit')
         print("Successful connection!")
     except mysql.connector.Error as err:
@@ -29,7 +29,7 @@ def test_query_one_col():
     cnx = None
     try:
         cnx = mysql.connector.connect(user='tripit_demo',
-                                      password='',
+                                      password=' ',
                                       database='tripit')
         print("Successful connection!")
     except mysql.connector.Error as err:
@@ -60,7 +60,7 @@ def test_query_many_columns():
     cnx = None
     try:
         cnx = mysql.connector.connect(user='tripit_demo',
-                                      password='',
+                                      password=' ',
                                       database='tripit')
         print("Successful connection!")
     except mysql.connector.Error as err:
@@ -99,7 +99,7 @@ def test_query_join():
     cnx = None
     try:
         cnx = mysql.connector.connect(user='tripit_demo',
-                                      password='',
+                                      password=' ',
                                       database='tripit')
         print("Successful connection!")
     except mysql.connector.Error as err:
@@ -141,7 +141,7 @@ def test_exist():
     cnx = None
     try:
         cnx = mysql.connector.connect(user='tripit_demo',
-                                      password='',
+                                      password=' ',
                                       database='tripit')
         print("Successful connection!")
     except mysql.connector.Error as err:
