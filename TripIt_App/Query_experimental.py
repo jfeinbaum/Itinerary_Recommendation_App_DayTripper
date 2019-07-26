@@ -135,12 +135,48 @@ def test_query_join():
     cnx.close()
 
 
+# Attempt to query some data
+def test_exist():
+    # Initialize to reference outside of try-catch block
+    cnx = None
+    try:
+        cnx = mysql.connector.connect(user='tripit_demo',
+                                      password='',
+                                      database='tripit')
+        print("Successful connection!")
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    # Prepare cursor for query
+    cursor = cnx.cursor()
+    # Setup the query as SQL syntax in string
+    # PROBLEM: cannot set feature_name or feature using the %s method because
+    # they are interpreted as having quotes in SQL, which causes error.
+    # Must concatenate this information into the query string directly.
+    # Parameter method %s only works for things that WOULD HAVE A DATATYPE!
+    query = "select feature_name from feature " \
+            "where feature_name like %s"
+    # Send the query to the database
+    cursor.execute(query, ("casual",))
+    # Grab the data using a loop
+    for feature_name in cursor:
+        print(feature_name)
+    # Close the cursor when finished with this one query
+    cursor.close()
+    # Close the connection when finished with db (i.e. quit app)
+    cnx.close()
+
 # Try the functions
 def main():
     #test_connect()
     #test_query_one_col()
     #test_query_many_columns()
-    test_query_join()
+    #test_query_join()
+    test_exist()
 
 
 main()
