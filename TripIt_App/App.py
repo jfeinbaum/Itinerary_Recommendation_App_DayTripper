@@ -14,8 +14,12 @@ def main():
         quest.select_city()
         quest.select_budget()
         quest.run_categories()
-
         print(quest)
+
+        itinerary = quest.recommend()
+        print("--- ITINERARY ---")
+        for i in itinerary:
+            print(i)
 
         quest.cnx.close()
     else:

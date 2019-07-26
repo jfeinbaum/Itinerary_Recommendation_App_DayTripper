@@ -80,7 +80,7 @@ def sample_type(cursor: 'mysql.connector.connection',
             " from " + table + \
             " group by " + kind + \
             " order by count(*) desc" + \
-            " limit 10"
+            " limit 5"
     cursor.execute(query)
     results = []
     for category_type in cursor:
@@ -107,6 +107,63 @@ def sample_features(cursor: 'mysql.connector.connection',
         results.append(category_type)
     smaller_list = []
     for i in range(5):
-        x = random.randint(1,len(results))
+        x = random.randint(1, len(results))
         smaller_list.append(results[x])
     return smaller_list
+
+
+# Function to recommend an activity
+def recommend_activity(cursor: 'mysql.connector.connection',
+                       table: str, title: str, kind: str,
+                       types: list, features: list, amount: int, budget=None) -> list:
+    # Setup the query
+    query = ""
+    if budget is not None:
+        query += "select " + title + ", " + kind + ", rating, budget, description" + \
+                " from " + table + " "
+    else:
+        query += "select " + title + ", " + kind + ", rating, description" + \
+                " from " + table + " "
+    # Generate the where clause: budget, then types, then features
+    # The where clause may or may not be included depending on the user's answers
+    where = "where "
+    # Data will be a list parameters (%s) for the sql query, convert to tuple before using
+    data = []
+    # The category may or may not have a budget
+    if budget is not None:
+        where += "("
+        for i in range(len(budget)):
+            where += "budget=%s or "
+            data.append((i + 1)*'$')
+        where = where.rstrip("or ")
+        where += ")"
+        print(where)
+    # Filter by the chosen types
+    if len(types) > 0:
+        where += " and ("
+        for t in types:
+            where += kind + "=%s or "
+            data.append(t)
+        where = where.rstrip("or ")
+        where += ")"
+        print(where)
+    # Filter by the chosen features
+    if len(features) > 0:
+        where += " and ("
+        for f in features:
+            where += "feature_id=%s or "
+            data.append(f)
+        where = where.rstrip("or ")
+        where += ")"
+    # Determine whether or not to include the where clause at all
+    if len(where) > 6:
+        query += where
+    # Order by rating and number of reviews
+    query += " order by rating desc, num_reviews desc" + \
+             " limit %s"
+    data.append(amount)
+    cursor.execute(query, (tuple(data)))
+    results = []
+    for info in cursor:
+        results.append(info)
+    return results

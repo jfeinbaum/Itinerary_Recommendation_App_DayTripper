@@ -11,11 +11,11 @@ class Questionnaire:
         # Location and budget are always included in query
         self.city = 1
         self.budget = "$"
-        self.categories = [Category('dining', 'dining_type', 'dining_id', 'dining_tag'),
-                           Category('museum', 'museum_type', 'museum_id', 'museum_tag'),
-                           Category('park', 'park_type', 'park_id', 'park_tag'),
-                           Category('landmark', 'landmark_type', 'landmark_id', 'landmark_tag'),
-                           Category('entertainment', 'ent_type', 'ent_id', 'entertainment_tag')]
+        self.categories = [Category('dining', 'dining_name', 'dining_type', 'dining_id', 'dining_tag', True),
+                           Category('museum', 'museum_name', 'museum_type', 'museum_id', 'museum_tag', False),
+                           Category('park', 'park_name', 'park_type', 'park_id', 'park_tag', False),
+                           Category('landmark', 'landmark_name', 'landmark_type', 'landmark_id', 'landmark_tag', False),
+                           Category('entertainment', 'ent_name', 'ent_type', 'ent_id', 'entertainment_tag', True)]
 
     def __str__(self) -> str:
         cat = "City: " + str(self.city) + '\n'
@@ -57,3 +57,27 @@ class Questionnaire:
         for i in range(len(self.categories)):
             self.categories[i].set_options(cursor)
         cursor.close()
+
+    # Function to recommend a itinerary
+    def recommend(self) -> list:
+        # 2 Restaurants, Assign 4 other activities
+        # Or pick 6 activities
+        total_act = 6
+        # Set the number of times to run each activity
+        # Pick 2 Restaurants & evenly distribute remaining activities
+        if self.categories[0].include:
+            self.categories[0].amount = 2
+            total_act -= 2
+        while total_act > 0:
+            for activity in self.categories[1:]:
+                if activity.include:
+                    activity.amount += 1
+                    total_act -= 1
+        # Create a list of activities based on choices
+        itinerary = []
+        cursor = self.cnx.cursor()
+        for activity in self.categories:
+            if activity.include:
+                itinerary.append(activity.recommend_category(cursor, self.budget))
+        cursor.close()
+        return itinerary

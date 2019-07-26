@@ -6,11 +6,19 @@ from Utility import *
 class Category:
 
     # Name of the category
-    def __init__(self, name: str, kind: str, id: str, tag: str):
+    def __init__(self, name: str, title: str, kind: str, id: str, tag: str, budget: bool):
+        # Name of the table ex. dining
         self.name = name
+        # Name of the title column ex. dining_name
+        self.title = title
+        # Name of the type column ex. dining_type
         self.kind = kind
+        # Name of the pk column ex. dining_id
         self.id = id
+        # Name of the join table ex. dining_tag
         self.tag = tag
+        self.has_budget = budget
+        self.amount = 0
         self.include = False
         self.types = []
         self.features = []
@@ -82,3 +90,15 @@ class Category:
                     print("No " + self.name + " with feature " + choice)
                 else:
                     self.features.append(choice)
+
+    # Function to recommend activities from the category
+    # Returns a list of the recommended activities
+    def recommend_category(self, cursor: 'mysql.connector.connection', budget: str) -> list:
+        if self.has_budget:
+            # Fill in optional parameter with budget from the questionnaire
+            return recommend_activity(cursor, self.name, self.title, self.kind,
+                                      self.types, self.features, self.amount, budget)
+        else:
+            # Ignore optional parameter since there is np budget for this table
+            return recommend_activity(cursor, self.name, self.title, self.kind,
+                                      self.types, self.features, self.amount)
