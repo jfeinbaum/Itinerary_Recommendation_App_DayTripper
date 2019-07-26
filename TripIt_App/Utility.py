@@ -140,7 +140,9 @@ def recommend_activity(cursor: 'mysql.connector.connection',
         print(where)
     # Filter by the chosen types
     if len(types) > 0:
-        where += " and ("
+        if len(where) > 6:
+            where += " and"
+        where += " ("
         for t in types:
             where += kind + "=%s or "
             data.append(t)
@@ -149,7 +151,9 @@ def recommend_activity(cursor: 'mysql.connector.connection',
         print(where)
     # Filter by the chosen features
     if len(features) > 0:
-        where += " and ("
+        if len(where) > 6:
+            where += " and"
+        where += " ("
         for f in features:
             where += "feature_id=%s or "
             data.append(f)
