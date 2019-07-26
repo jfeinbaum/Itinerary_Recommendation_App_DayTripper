@@ -60,7 +60,7 @@ class Category:
                 if pk is None:
                     print("No " + self.name + " of type " + choice)
                 else:
-                    self.types.append(pk)
+                    self.types.append(choice)
 
     # Function to set the chosen types
     #  cursor: the database cursor
@@ -81,4 +81,4 @@ class Category:
                 if pk is None:
                     print("No " + self.name + " with feature " + choice)
                 else:
-                    self.features.append(pk)
+                    self.features.append(choice)
