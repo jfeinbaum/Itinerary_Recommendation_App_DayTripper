@@ -78,8 +78,8 @@ class Questionnaire:
                     total_act -= 1
                 else:
                     skips += 1
-                    if skips > max_skips:
-                        break
+            if skips > max_skips:
+                break
         # Create a list of activities based on choices
         itinerary = []
         cursor = self.cnx.cursor()
