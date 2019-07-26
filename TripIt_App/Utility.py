@@ -169,3 +169,15 @@ def recommend_activity(cursor: 'mysql.connector.connection',
     for info in cursor:
         results.append(info)
     return results
+
+
+def output_itinerary(itinerary: list) -> str:
+    cat = "--------  ITINERARY  --------\n"
+    for category in itinerary:
+        for column in category:
+            for i in column:
+                cat += str(i).strip() + ', '
+            cat = cat.rstrip(', ')
+            cat += '\n'
+    cat += "-----------------------------\n"
+    return cat

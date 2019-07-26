@@ -10,17 +10,13 @@ def main():
     if int(response) == 1:
         # Questionnaire
         quest = Questionnaire()
-
+        # Complete the survey information
         quest.select_city()
         quest.select_budget()
         quest.run_categories()
-        print(quest)
-
-        itinerary = quest.recommend()
-        print("--- ITINERARY ---")
-        for i in itinerary:
-            print(i)
-
+        # Output the itinerary
+        print(output_itinerary(quest.recommend()))
+        # Close the connection
         quest.cnx.close()
     else:
         # Straight to workspace
