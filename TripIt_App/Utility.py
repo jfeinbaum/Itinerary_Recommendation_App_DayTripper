@@ -99,10 +99,10 @@ def sample_features(cursor: 'mysql.connector.connection',
             " from " + table + " join " + tag + " using (" + id + ")" + \
             " join feature using(feature_id)" + \
             " group by feature_id" + \
-            " order by count(*) desc" + \
-            " limit 5"
+            " order by count(*) desc"
     cursor.execute(query)
     results = []
     for category_type in cursor:
         results.append(category_type)
-    return results
+    # Results list has ALL of the features
+    # return smaller_list(results)
