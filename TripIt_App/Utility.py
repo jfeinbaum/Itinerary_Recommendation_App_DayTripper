@@ -137,7 +137,6 @@ def recommend_activity(cursor: 'mysql.connector.connection',
             data.append((i + 1)*'$')
         where = where.rstrip("or ")
         where += ")"
-        print(where)
     # Filter by the chosen types
     if len(types) > 0:
         if len(where) > 6:
@@ -148,7 +147,6 @@ def recommend_activity(cursor: 'mysql.connector.connection',
             data.append(t)
         where = where.rstrip("or ")
         where += ")"
-        print(where)
     # Filter by the chosen features
     if len(features) > 0:
         if len(where) > 6:
