@@ -1,0 +1,57 @@
+<ScreenOne>:
+	BoxLayout:
+	    orientation: 'vertical'
+		Button:
+			text: "Recomendation"
+			background_color : 0, 0, 1, 1
+			size: 50, 50
+			size_hint: (0.5, 0.5)
+			on_press:
+				# You can define the duration of the change
+				# and the direction of the slide
+				root.printfunction()
+				root.manager.current = 'screen_two'
+		Button:
+			text: "Script"
+			background_color : 0, 0, 1, 1
+			size: 50, 50
+			on_press:
+				# You can define the duration of the change
+				# and the direction of the slide
+				root.printfunction()
+				root.manager.current = 'screen_two'
+
+<ScreenTwo>:
+	BoxLayout:
+		Button:
+			text: "Go to Screen 3"
+			background_color : 1, 1, 0, 1
+			on_press:
+				root.manager.current = 'screen_three'
+
+<ScreenThree>:
+	BoxLayout:
+		Button:
+			text: "Go to Screen 4"
+			background_color : 1, 0, 1, 1
+			on_press:
+				root.manager.current = 'screen_four'
+
+<ScreenFour>:
+	BoxLayout:
+		Button:
+			text: "Go to Screen 5"
+			background_color : 0, 1, 1, 1
+			on_press:
+				root.manager.current = 'screen_five'
+
+<ScreenFive>:
+	BoxLayout:
+		Button:
+			text: "Go to Screen 1"
+			background_color : 1, 0, 0, 1
+			on_press:
+				root.manager.current = 'screen_one'
+
+
+
