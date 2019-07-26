@@ -68,11 +68,18 @@ class Questionnaire:
         if self.categories[0].include:
             self.categories[0].amount = 2
             total_act -= 2
+        skips = 0
+        max_skips = len(self.categories[1:])
         while total_act > 0:
             for activity in self.categories[1:]:
                 if activity.include:
                     activity.amount += 1
+                    skips -= 1
                     total_act -= 1
+                else:
+                    skips += 1
+                    if skips > max_skips:
+                        break
         # Create a list of activities based on choices
         itinerary = []
         cursor = self.cnx.cursor()
