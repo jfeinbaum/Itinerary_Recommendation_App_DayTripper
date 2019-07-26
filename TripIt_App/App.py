@@ -10,11 +10,14 @@ def main():
     if int(response) == 1:
         # Questionnaire
         quest = Questionnaire()
+
         quest.select_city()
-        print("VERIFY >> " + str(quest.city))
         quest.select_budget()
-        print("VERIFY >> " + quest.budget)
         quest.run_categories()
+
+        print(quest)
+
+        quest.cnx.close()
     else:
         # Straight to workspace
         pass

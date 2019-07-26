@@ -11,20 +11,27 @@ class Questionnaire:
         # Location and budget are always included in query
         self.city = 1
         self.budget = "$"
-        self.categories = [Category('dining'),
-                           Category('museum'),
-                           Category('park'),
-                           Category('landmark'),
-                           Category('entertainment')]
+        self.categories = [Category('dining', 'dining_type', 'dining_id', 'dining_tag'),
+                           Category('museum', 'museum_type', 'museum_id', 'museum_tag'),
+                           Category('park', 'park_type', 'park_id', 'park_tag'),
+                           Category('landmark', 'landmark_type', 'landmark_id', 'landmark_tag'),
+                           Category('entertainment', 'ent_type', 'ent_id', 'entertainment_tag')]
 
+    def __str__(self) -> str:
+        cat = "City: " + str(self.city) + '\n'
+        cat += "Budget: " + self.budget + '\n'
+        for i in range(len(self.categories)):
+            cat += "---------------\n"
+            cat += str(self.categories[i])
+        return cat
 
     # Function to select a city
     # Sets the city attribute
     def select_city(self) -> None:
-        city = input("Select a city:\n")
         cursor = self.cnx.cursor()
         result = None
         while result is None:
+            city = input("Select a city:\n")
             result = get_pk(cursor, "city", "city_name", city, "city_id")
         self.city = result
         cursor.close()
@@ -44,23 +51,9 @@ class Questionnaire:
         self.budget = budget
 
     # Function to set info attributes for the categories
-    # inc_x, x_types, x_features attributes for all in CATEGORY list
+    # Include a category, select types, select features
     def run_categories(self) -> None:
+        cursor = self.cnx.cursor()
         for i in range(len(self.categories)):
-            self.category_options(i)
-
-    # Function to walk the user through category questions
-    #  num: integer, index of the list CATEGORY to set attributes for
-    def category_options(self, num: int):
-        # Include the category at all?
-        want = None
-        while want is None:
-            choice = input("Include " + str(self.categories[num]) + " activities? (y/n)\n")
-            if choice == 'y':
-                want = True
-            elif choice == 'n':
-                want = False
-        self.categories[num].include = want
-        print('VERIFY >> ' + str(self.categories[num].include))
-
-
+            self.categories[i].set_options(cursor)
+        cursor.close()
