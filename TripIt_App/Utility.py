@@ -8,7 +8,7 @@ def est_connection() -> 'mysql.connector.connection':
     cnx = None
     try:
         cnx = mysql.connector.connect(user='tripit_demo',
-                                      password='',
+                                      password=' ',
                                       database='tripit')
         # print("Successful connection!")
     except mysql.connector.Error as err:
