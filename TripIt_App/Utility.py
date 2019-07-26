@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
+import random
 
 
 # Function to establish a connection with the database
@@ -79,7 +80,7 @@ def sample_type(cursor: 'mysql.connector.connection',
             " from " + table + \
             " group by " + kind + \
             " order by count(*) desc" + \
-            " limit 5"
+            " limit 10"
     cursor.execute(query)
     results = []
     for category_type in cursor:
@@ -104,5 +105,8 @@ def sample_features(cursor: 'mysql.connector.connection',
     results = []
     for category_type in cursor:
         results.append(category_type)
-    # Results list has ALL of the features
-    # return smaller_list(results)
+    smaller_list = []
+    for i in range(5):
+        x = random.randint(1,len(results))
+        smaller_list.append(results[x])
+    return smaller_list
