@@ -2,6 +2,7 @@ import mysql.connector
 from mysql.connector import errorcode
 import random
 import math
+from geopy.distance import geodesic
 
 
 # Function to establish a connection with the database
@@ -120,10 +121,10 @@ def recommend_activity(cursor: 'mysql.connector.connection',
     # Setup the query
     query = ""
     if budget is not None:
-        query += "select " + title + ", " + kind + ", rating, budget, description" + \
+        query += "select " + title + ", " + kind + ", rating, budget, description, latitude, longitude" + \
                 " from " + table + " "
     else:
-        query += "select " + title + ", " + kind + ", rating, description" + \
+        query += "select " + title + ", " + kind + ", rating, description, latitude, longitude" + \
                 " from " + table + " "
     # Generate the where clause: budget, then types, then features
     # The where clause may or may not be included depending on the user's answers
@@ -241,3 +242,30 @@ def order_itinerary(itinerary: list) -> list:
 #             cat = cat.rstrip(', ')
 #             data.append(cat)
 #     return data
+
+
+
+
+
+def get_travel_times(itinerary: list) -> list:
+    while True:
+        mode = str(input("Select mode of transportation (walk, bike, or car):\n"))
+        if mode == "walk":
+            mph = 3
+            break
+        elif mode == "bike":
+            mph = 7
+            break
+        elif mode == "car":
+            mph = 15
+            break
+    travel_times = []
+    for i in range(len(itinerary)-1):
+        coord_1 = (itinerary[i][-2], itinerary[i][-1])
+        coord_2 = (itinerary[i+1][-2], itinerary[i+1][-1])
+        miles = geodesic(coord_1, coord_2).miles
+        miles = miles * 1.25  # "city" distance to account for traffic
+        minutes = int((miles/mph)*60)
+        travel_times.append(minutes)
+    return travel_times
+

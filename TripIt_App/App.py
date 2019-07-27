@@ -17,7 +17,15 @@ def main():
         # Output the itinerary
         itinerary = quest.recommend()
         ordered = order_itinerary(itinerary)
-        print(ordered)
+        times = get_travel_times(ordered)
+
+
+        for i in range(len(ordered)-1):
+            print(ordered[i])
+            print('\n\t\t|\t'+str(times[i])+' minutes'+'\n\t\t|\n\t\tv\n')
+        print(ordered[-1])
+
+
         #print(format_itinerary(ordered))
         # Close the connection
         quest.cnx.close()
