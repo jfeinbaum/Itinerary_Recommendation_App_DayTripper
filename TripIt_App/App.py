@@ -16,8 +16,9 @@ def main():
         quest.run_categories()
         # Output the itinerary
         itinerary = quest.recommend()
-        order_itinerary(itinerary)
-        print(itinerary)
+        ordered = order_itinerary(itinerary)
+        print(ordered)
+        #print(format_itinerary(ordered))
         # Close the connection
         quest.cnx.close()
     else:

@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 import random
+import math
 
 
 # Function to establish a connection with the database
@@ -175,25 +176,57 @@ def recommend_activity(cursor: 'mysql.connector.connection',
 
 def order_itinerary(itinerary: list) -> list:
     dining = 0
+    dining_list = []
     other = 0
+    other_list = []
+    # Count the number of occurrences
+    # Add the entries to the appropriate sublist
     for category in itinerary:
         for entry in category:
             if entry[0] == 'dining':
                 dining += 1
+                dining_list.append(entry)
             else:
                 other += 1
+                other_list.append(entry)
     # If there is only dining, return the itinerary
     if other == 0:
-        return itinerary
-    # If there is no dining, make a random order
-    elif dining == 0:
-        pass
+        return dining_list
+    # Mix up the order of the other activities
+    ordered = []
+    while len(ordered) < len(other_list):
+        choice = other_list[random.randint(0, other - 1)]
+        if choice not in ordered:
+            ordered.append(choice)
+    # If there is no dining, just return the ordered list of other activities
+    if dining == 0:
+        return ordered
     # Otherwise, try to reasonably place the dining between other activities
     else:
-        # Random order of sublist with other activities
-        # floor / ceil 3 and place dining
-        pass
+        final_order = []
+        ends = math.floor(other / 3)
+        middle = math.ceil(other / 3)
+        for i in range(ends):
+            final_order.append(ordered[i])
+        final_order.append(dining_list[0])
+        for i in range(middle):
+            final_order.append(ordered[i + ends])
+        final_order.append(dining_list[1])
+        for i in range(ends):
+            final_order.append(ordered[i + (2 * ends)])
 
+        return final_order
+        # for i in range(0, dining + other):
+        #     if i <= ends:
+        #         final_order.append(ordered[i])
+        #     elif i == ends + 1:
+        #         final_order.append(dining_list[1])
+        #     elif ends + 2 <= i <= ends + middle + 2:
+
+
+
+
+# Formatting needs work
 
 # def format_itinerary(itinerary: list) -> list:
 #     data = []
