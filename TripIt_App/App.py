@@ -15,7 +15,9 @@ def main():
         quest.select_budget()
         quest.run_categories()
         # Output the itinerary
-        print(output_itinerary(quest.recommend()))
+        itinerary = quest.recommend()
+        order_itinerary(itinerary)
+        print(itinerary)
         # Close the connection
         quest.cnx.close()
     else:

@@ -167,17 +167,44 @@ def recommend_activity(cursor: 'mysql.connector.connection',
     cursor.execute(query, (tuple(data)))
     results = []
     for info in cursor:
+        category_label = [table]
+        info = category_label + list(info)
         results.append(info)
     return results
 
 
-def output_itinerary(itinerary: list) -> str:
-    cat = "--------  ITINERARY  --------\n"
+def order_itinerary(itinerary: list) -> list:
+    dining = 0
+    other = 0
     for category in itinerary:
-        for column in category:
-            for i in column:
-                cat += str(i).strip() + ', '
-            cat = cat.rstrip(', ')
-            cat += '\n'
-    cat += "-----------------------------\n"
-    return cat
+        for entry in category:
+            if entry[0] == 'dining':
+                dining += 1
+            else:
+                other += 1
+    # If there is only dining, return the itinerary
+    if other == 0:
+        return itinerary
+    # If there is no dining, make a random order
+    elif dining == 0:
+        pass
+    # Otherwise, try to reasonably place the dining between other activities
+    else:
+        # Random order of sublist with other activities
+        # floor / ceil 3 and place dining
+        pass
+
+
+# def format_itinerary(itinerary: list) -> list:
+#     data = []
+#     for category in itinerary:
+#         for entry in category:
+#             cat = ""
+#             for i in range(len(entry)):
+#                 if i == 0:
+#                     cat += str(entry[i]).strip().upper() + ': '
+#                 else:
+#                     cat += str(entry[i]).strip() + ', '
+#             cat = cat.rstrip(', ')
+#             data.append(cat)
+#     return data

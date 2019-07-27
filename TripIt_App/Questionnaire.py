@@ -58,6 +58,13 @@ class Questionnaire:
             self.categories[i].set_options(cursor)
         cursor.close()
 
+    # Function to get a list of the category names
+    def category_names(self) -> list:
+        names = []
+        for c in self.categories:
+            names.append(c.name)
+        return names
+
     # Function to recommend a itinerary
     def recommend(self) -> list:
         # 2 Restaurants, Assign 4 other activities
@@ -69,7 +76,7 @@ class Questionnaire:
             self.categories[0].amount = 2
             total_act -= 2
         skips = 0
-        max_skips = len(self.categories[1:])
+        max_skips = len(self.categories[1:]) * total_act
         while total_act > 0:
             for activity in self.categories[1:]:
                 if activity.include:
