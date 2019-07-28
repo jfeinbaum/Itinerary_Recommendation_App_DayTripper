@@ -244,7 +244,24 @@ def order_itinerary(itinerary: list) -> list:
 #     return data
 
 
+def print_itinerary(itinerary: list, times: list) -> None:
+    formatted_itinerary = []
+    for i in range(len(itinerary)):
+        entry = itinerary[i]
+        name = entry[1]
+        type = entry[2]
+        rating = str(entry[3])
+        if entry[0] == 'dining' or entry[0] == 'entertainment':
+            description = entry[5]
+        else:
+            description = entry[4]
+        formatted_entry = name+'\n\t'+type+'\n\tRating: '+rating+'\n\t'+description+'\n'
 
+        formatted_itinerary.append(formatted_entry)
+    for i in range(len(formatted_itinerary) - 1):
+        print(formatted_itinerary[i])
+        print('\n\t\t|\t' + str(times[i]) + ' minutes' + '\n\t\t|\n\t\tv\n')
+    print(formatted_itinerary[-1])
 
 
 def get_travel_times(itinerary: list) -> list:
