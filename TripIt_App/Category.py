@@ -23,6 +23,7 @@ class Category:
         self.types = []
         self.features = []
 
+    # String representation of a category's information
     def __str__(self) -> str:
         cat = "\tCategory: " + self.name + '\n'
         cat += "\tInclude: " + str(self.include) + '\n'
@@ -92,8 +93,11 @@ class Category:
                     self.features.append(choice)
 
     # Function to recommend activities from the category
+    #  cursor: the mysql connector cursor to the database
+    #  budget: string of 1 to 4 '$' signs (ex. '$$$')
     # Returns a list of the recommended activities
     def recommend_category(self, cursor: 'mysql.connector.connection', budget: str) -> list:
+        # The budget column only exists in certain tables!
         if self.has_budget:
             # Fill in optional parameter with budget from the questionnaire
             return recommend_activity(cursor, self.name, self.title, self.kind,

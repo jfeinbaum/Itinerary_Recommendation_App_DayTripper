@@ -17,6 +17,7 @@ class Questionnaire:
                            Category('landmark', 'landmark_name', 'landmark_type', 'landmark_id', 'landmark_tag', False),
                            Category('entertainment', 'ent_name', 'ent_type', 'ent_id', 'entertainment_tag', True)]
 
+    # Defines the string representation of a Questionnaire
     def __str__(self) -> str:
         cat = "City: " + str(self.city) + '\n'
         cat += "Budget: " + self.budget + '\n'
@@ -59,6 +60,7 @@ class Questionnaire:
         cursor.close()
 
     # Function to get a list of the category names
+    # Returns a list of category names
     def category_names(self) -> list:
         names = []
         for c in self.categories:
@@ -66,6 +68,9 @@ class Questionnaire:
         return names
 
     # Function to recommend a itinerary
+    # Returns a list containing recommended activities
+    # Note: Itinerary sorted by category in the order they were added to
+    # the Questionnaire. Reorder them using order_itinerary()
     def recommend(self) -> list:
         # 2 Restaurants, Assign 4 other activities
         # Or pick 6 activities

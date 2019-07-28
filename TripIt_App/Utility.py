@@ -115,6 +115,14 @@ def sample_features(cursor: 'mysql.connector.connection',
 
 
 # Function to recommend an activity
+#  cursor: the connection cursor
+#  table: name of the category table (ex. 'dining')
+#  title: name of the x_name attribute (ex. 'dining_name')
+#  kind: name of the x_type attribute (ex. 'dining_type')
+#  types: list of chosen types, use Category.types
+#  features: the list of chosen features, use Category.features
+#  budget: the chosen budget as 1 - 4 '$' signs in a single string (ex. '$$$')
+# Returns a list of recommended activities
 def recommend_activity(cursor: 'mysql.connector.connection',
                        table: str, title: str, kind: str,
                        types: list, features: list, amount: int, budget=None) -> list:
@@ -175,6 +183,9 @@ def recommend_activity(cursor: 'mysql.connector.connection',
     return results
 
 
+# Function to order the recommended activities
+#  itinerary: list of recommended activities, use the output from recommend_activity())
+# Returns a list of activities in a new order (partially random)
 def order_itinerary(itinerary: list) -> list:
     dining = 0
     dining_list = []
@@ -217,33 +228,12 @@ def order_itinerary(itinerary: list) -> list:
             final_order.append(ordered[i + (2 * ends)])
 
         return final_order
-        # for i in range(0, dining + other):
-        #     if i <= ends:
-        #         final_order.append(ordered[i])
-        #     elif i == ends + 1:
-        #         final_order.append(dining_list[1])
-        #     elif ends + 2 <= i <= ends + middle + 2:
 
 
-
-
-# Formatting needs work
-
-# def format_itinerary(itinerary: list) -> list:
-#     data = []
-#     for category in itinerary:
-#         for entry in category:
-#             cat = ""
-#             for i in range(len(entry)):
-#                 if i == 0:
-#                     cat += str(entry[i]).strip().upper() + ': '
-#                 else:
-#                     cat += str(entry[i]).strip() + ', '
-#             cat = cat.rstrip(', ')
-#             data.append(cat)
-#     return data
-
-
+# Function to print the itinerary in a readable format
+#  itinerary: list of recommended activities, use the output from recommend_activity())
+#  times: list of travel times, use output from get_travel_times()
+# Returns nothing, prints the itinerary to terminal
 def print_itinerary(itinerary: list, times: list) -> None:
     formatted_itinerary = []
     for i in range(len(itinerary)):
@@ -264,6 +254,9 @@ def print_itinerary(itinerary: list, times: list) -> None:
     print(formatted_itinerary[-1])
 
 
+# Function to calculate the travel times between activities
+#  itinerary: list of recommended activities, use the output from recommend_activity())
+# Returns a list of travel times
 def get_travel_times(itinerary: list) -> list:
     while True:
         mode = str(input("Select mode of transportation (walk, bike, or car):\n"))
