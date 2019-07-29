@@ -77,7 +77,7 @@ class Category:
     def set_features(self, cursor: 'mysql.connector.connection') -> None:
         # Choose features
         while True:
-            choice = str(input("Select a feature or enter 'done' to move on:\n"))
+            choice = str(input("Select a feature, enter 'done' to move on or 'sample' for ideas:\n"))
             if choice == 'done':
                 break
             elif choice == 'sample':

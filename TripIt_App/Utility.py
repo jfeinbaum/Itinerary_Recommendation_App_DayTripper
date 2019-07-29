@@ -225,7 +225,7 @@ def order_itinerary(itinerary: list) -> list:
             final_order.append(ordered[i + ends])
         final_order.append(dining_list[1])
         for i in range(ends):
-            final_order.append(ordered[i + (2 * ends)])
+            final_order.append(ordered[i + (2 * ends) + 1])
 
         return final_order
 
