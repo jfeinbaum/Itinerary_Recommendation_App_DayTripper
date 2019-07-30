@@ -21,7 +21,9 @@ def main():
         itinerary = quest.recommend()
         ordered = order_itinerary(itinerary)
         times = get_travel_times(ordered)
-        print_itinerary(ordered, times)
+        formatted = format_itinerary(ordered, times)
+        save(formatted, 'MyItinerary.txt')
+        print(formatted)
         # Close the connection
         quest.cnx.close()
     else:
