@@ -4,6 +4,8 @@ import random
 import math
 from geopy.distance import geodesic
 
+LINE = "---------------------------"
+
 
 # Function to establish a connection with the database
 def est_connection() -> 'mysql.connector.connection':
@@ -41,7 +43,6 @@ def get_pk(cursor: 'mysql.connector.connection',
     result = None
     for pk in cursor:
         result = int(str(pk).lstrip('(').rstrip(',)'))
-    print(result)
     return result
 
 
@@ -67,7 +68,6 @@ def get_feature_pk(cursor: 'mysql.connector.connection',
     result = None
     for pk in cursor:
         result = int(str(pk).lstrip('(').rstrip(',)'))
-    print(result)
     return result
 
 
@@ -119,6 +119,8 @@ def sample_features(cursor: 'mysql.connector.connection',
 #  table: name of the category table (ex. 'dining')
 #  title: name of the x_name attribute (ex. 'dining_name')
 #  kind: name of the x_type attribute (ex. 'dining_type')
+#  tag: name of the x_tag table (ex. 'dining_tag')
+#  id: name of the x_id attribute (ex. 'dining_id')
 #  types: list of chosen types, use Category.types
 #  features: the list of chosen features, use Category.features
 #  budget: the chosen budget as 1 - 4 '$' signs in a single string (ex. '$$$')
@@ -178,9 +180,7 @@ def recommend_activity(cursor: 'mysql.connector.connection',
     # Order by rating and number of reviews
     query += " order by rating desc, num_reviews desc" + \
              " limit %s"
-
-    print(query)
-
+    # Run the query and gather the results in a list
     data.append(amount)
     cursor.execute(query, (tuple(data)))
     results = []
@@ -223,23 +223,39 @@ def order_itinerary(itinerary: list) -> list:
     if dining == 0:
         return ordered
     # Otherwise, try to reasonably place the dining between other activities
-    else:
-        final_order = []
-        ends = math.floor(other / 3)
-        middle = math.ceil(other / 3)
-        for i in range(dining + other):
-            if i < ends:
-                final_order.append(ordered[i])
-            elif i == ends:
-                final_order.append(dining_list[0])
-            # Offset by 1 for the inserted dining
-            elif i < ends + middle + 1:
-                final_order.append(ordered[i - 1])
-            elif i == ends + middle + 1:
-                final_order.append(dining_list[1])
+    final_order = []
+    # For this case, every other seems reasonable
+    if dining == other:
+        total = dining + other
+        for i in range(total):
+            if i % 2 == 0:
+                final_order.append(ordered.pop())
             else:
-                final_order.append(ordered[i - 2])
-
+                final_order.append(dining_list.pop())
+        return final_order
+    # When there are more 'other' activities, spread the dining out
+    else:
+        # Reserve times for dining
+        reserved = []
+        total = dining + other
+        # Chunk is a block of time to wait between meals
+        chunk = math.floor(total / (dining + 1))
+        for i in range(dining):
+            slot = ((i + 1) * chunk) + (i % 2)
+            # Make sure the reservation doesn't go out of bounds
+            if slot > total - 1:
+                slot = total - 1
+                # Move it back if there is somehow a collision
+                # (there shouldn't be but don't want to lose the activity just in case)
+                while slot in reserved:
+                    slot -= 1
+            reserved.append(slot)
+        # Add activities to the itinerary, using reserved list to place dining
+        for i in range(total):
+            if i in reserved:
+                final_order.append(dining_list.pop())
+            else:
+                final_order.append(ordered.pop())
         return final_order
 
 
@@ -258,12 +274,12 @@ def print_itinerary(itinerary: list, times: list) -> None:
             description = entry[5]
         else:
             description = entry[4]
-        formatted_entry = name+'\n\t'+type+'\n\tRating: '+rating+'\n\t'+description+'\n'
+        formatted_entry = name+'\n\t'+type+'\n\tRating: '+rating+'\n\t'+description #+'\n'
 
         formatted_itinerary.append(formatted_entry)
     for i in range(len(formatted_itinerary) - 1):
         print(formatted_itinerary[i])
-        print('\n\t\t|\t' + str(times[i]) + ' minutes' + '\n\t\t|\n\t\tv\n')
+        print('\t\t|\n\t\t|\t' + str(times[i]) + ' minutes' + '\n\t\t|\n\t\tv')
     print(formatted_itinerary[-1])
 
 

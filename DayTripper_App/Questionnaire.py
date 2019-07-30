@@ -1,4 +1,3 @@
-from Utility import *
 from Category import *
 
 
@@ -31,10 +30,13 @@ class Questionnaire:
     def select_city(self) -> None:
         cursor = self.cnx.cursor()
         result = None
+        city = ""
         while result is None:
             city = input("Select a city:\n")
             result = get_pk(cursor, "city", "city_name", city, "city_id")
         self.city = result
+        print("Selected city: " + str(city))
+        print(LINE)
         cursor.close()
 
     # Function to select a
@@ -49,6 +51,8 @@ class Questionnaire:
                     break
                 else:
                     budget += '$'
+        print("Selected budget: " + str(budget))
+        print(LINE)
         self.budget = budget
 
     # Function to set info attributes for the categories
