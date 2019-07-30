@@ -128,7 +128,7 @@ def recommend_activity(cursor: 'mysql.connector.connection',
                        types: list, features: list, amount: int, budget=None) -> list:
     # Generate the where clause: budget, then types, then features
     # The where clause may or may not be included depending on the user's answers
-    where = "where "
+    where = " where "
     # Data will be a list parameters (%s) for the sql query, convert to tuple before using
     data = []
     # The category may or may not have a budget
@@ -141,7 +141,7 @@ def recommend_activity(cursor: 'mysql.connector.connection',
         where += ")"
     # Filter by the chosen types
     if len(types) > 0:
-        if len(where) > 6:
+        if len(where) > 7:
             where += " and"
         where += " ("
         for t in types:
@@ -151,7 +151,7 @@ def recommend_activity(cursor: 'mysql.connector.connection',
         where += ")"
     # Filter by the chosen features
     if len(features) > 0:
-        if len(where) > 6:
+        if len(where) > 7:
             where += " and"
         where += " ("
         for f in features:
@@ -159,31 +159,27 @@ def recommend_activity(cursor: 'mysql.connector.connection',
             data.append(f)
         where = where.rstrip("or ")
         where += ")"
-
-    # Setup the query
-    # 4 Cases: Budget or no Budget & Features or no features
+    # Prepare the query
     query = ""
+    # 4 Cases: (Budget or no Budget) * (Features or no features)
+    # Set the placeholder variables in the query string
+    price_column = ""
+    join = ""
     if budget is not None:
-        if len(features) > 0:
-            query += "select distinct " + title + ", " + kind + ", rating, budget, " + table + ".description, latitude, longitude" + \
-                     " from " + table + " join " + tag + " using (" + id + ") join feature using (feature_id) "
-        else:
-            query += "select distinct " + title + ", " + kind + ", rating, budget, " + table + ".description, latitude, longitude" + \
-                     " from " + table + " "
-    else:
-        if len(features) > 0:
-            query += "select " + title + ", " + kind + ", rating, " + table + ".description, latitude, longitude" + \
-                     " from " + table + " join " + tag + " using (" + id + ") join feature using (feature_id) "
-        else:
-            query += "select " + title + ", " + kind + ", rating, " + table + ".description, latitude, longitude" + \
-                     " from " + table + " "
-
+        price_column = "budget, "
+    if len(features) > 0:
+        join = " join " + tag + " using (" + id + ") join feature using (feature_id) "
+    # Generate the query, accounting for the 4 cases above
+    query += "select distinct " + title + ", " + kind + ", rating, " + price_column + table + \
+             ".description, latitude, longitude" + " from " + table + join
     # Determine whether or not to include the where clause at all
-    if len(where) > 6:
+    if len(where) > 7:
         query += where
     # Order by rating and number of reviews
     query += " order by rating desc, num_reviews desc" + \
              " limit %s"
+
+    print(query)
 
     data.append(amount)
     cursor.execute(query, (tuple(data)))
