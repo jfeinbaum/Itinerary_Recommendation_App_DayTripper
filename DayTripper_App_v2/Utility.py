@@ -332,7 +332,29 @@ def save(formatted_itinerary: str, filename: str) -> None:
     file.write(formatted_itinerary)
     file.close()
 
-    
+ 
+# Function to insert a new itinerary
+#  itinerary: list of recommended activities, in order
+#  username: str, the user that created this itinerary
+#  description: str, the description to be saved along with this itinerary
+# Returns nothing
+def insert_itinerary(cnx: 'mysql.connector.connection',
+           itinerary: list, username: str, description: str) -> None:
+    cursor = cnx.cursor()
+    user_id = str(get_pk(cursor, "user", "user_name", username, "user_id"))
+    itinerary_query = "insert into itinerary (user_id, description) value (%s,%s)"
+    cursor.execute(itinerary_query, (user_id, description))
+    cnx.commit()
+    itinerary_id = str(get_pk(cursor, "itinerary", "description", description, "itinerary_id"))
+    for i in range(len(itinerary)):
+        name = itinerary[i][1]
+        ordering = str(i+1)
+        place_id = str(get_pk(cursor, "place", "name", name, "place_id"))
+        query = "insert into activity value (%s,%s,%s)"
+        cursor.execute(query, (itinerary_id, place_id, ordering))
+        cnx.commit()
+        
+        
 # Function to check if a user exists in the database
 def check_user_exists(cursor: 'mysql.connector.connection',
                       username: str) -> bool:
