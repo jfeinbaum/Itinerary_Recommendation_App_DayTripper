@@ -56,8 +56,12 @@ def main():
             ordered = order_itinerary(itinerary)
             times = get_travel_times(ordered)
             formatted = format_itinerary(ordered, times)
-            save(formatted, 'MyItinerary.txt')
             print(formatted)
+            print(LINE)
+            desc = input("Enter a description to save this itinerary: ")
+            save(formatted, 'MyItinerary.txt')
+            insert_itinerary(cnx, ordered, username, desc)
+            print()
 
         # View template itineraries
         elif int(response) == 2:
