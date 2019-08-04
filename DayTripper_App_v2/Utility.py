@@ -332,3 +332,27 @@ def save(formatted_itinerary: str, filename: str) -> None:
     file.write(formatted_itinerary)
     file.close()
 
+# Function to check if a user exists in the database
+def check_user_exists(cursor: 'mysql.connector.connection',
+                      username: str) -> bool:
+    query = "select count(*) from user where user_name =%s"
+    cursor.execute(query, (username,))
+    for row in cursor:
+        if int(row[0]) == 1:
+            return True
+    return False
+
+
+# Function to register a new user into the database
+def register_user(cnx: 'mysql.connector.connection',
+           username: str, password: str, ) -> bool:
+    cursor = cnx.cursor()
+    if not check_user_exists(cursor, username):
+        query = "insert into user (user_name, password) value (%s,%s)"
+        data = (username, password)
+        cursor.execute(query, data)
+        cnx.commit()
+        return True
+    else:
+        return False
+
