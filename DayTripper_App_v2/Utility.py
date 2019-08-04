@@ -332,6 +332,7 @@ def save(formatted_itinerary: str, filename: str) -> None:
     file.write(formatted_itinerary)
     file.close()
 
+    
 # Function to check if a user exists in the database
 def check_user_exists(cursor: 'mysql.connector.connection',
                       username: str) -> bool:
@@ -340,6 +341,21 @@ def check_user_exists(cursor: 'mysql.connector.connection',
     for row in cursor:
         if int(row[0]) == 1:
             return True
+    return False
+
+
+# Function to check if the username and password are valid
+def verify_login(cnx: 'mysql.connector.connection',
+           username: str, password: str, ) -> bool:
+    cursor = cnx.cursor()
+    exists = check_user_exists(cursor, username)
+    if exists:
+        query = "select password from user where user_name =%s"
+        cursor.execute(query, (username,))
+        for row in cursor:
+            if row[0] == password:
+                return True
+            return False
     return False
 
 
