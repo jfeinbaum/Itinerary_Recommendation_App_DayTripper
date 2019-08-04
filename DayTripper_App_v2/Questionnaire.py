@@ -5,16 +5,20 @@ from Category import *
 class Questionnaire:
 
     # Variables will be used to generate an itinerary
-    def __init__(self):
-        self.cnx = est_connection()
+    def __init__(self, cnx: 'mysql.connector.connection'):
+        self.cnx = cnx
         # Location and budget are always included in query
         self.city = 1
         self.budget = "$"
-        self.categories = [Category('dining', 'dining_name', 'dining_type', 'dining_id', 'dining_tag', True),
-                           Category('museum', 'museum_name', 'museum_type', 'museum_id', 'museum_tag', False),
-                           Category('park', 'park_name', 'park_type', 'park_id', 'park_tag', False),
-                           Category('landmark', 'landmark_name', 'landmark_type', 'landmark_id', 'landmark_tag', False),
-                           Category('entertainment', 'ent_name', 'ent_type', 'ent_id', 'entertainment_tag', True)]
+        self.categories = []
+        # Generate all possible categories automatically
+        cursor = cnx.cursor()
+        setup = "select distinct category from place"
+        cursor.execute(setup)
+        for category in cursor:
+            name = str(category).lstrip('(\'').rstrip('\',)')
+            self.categories.append(Category(name))
+        cursor.close()
 
     # Defines the string representation of a Questionnaire
     def __str__(self) -> str:

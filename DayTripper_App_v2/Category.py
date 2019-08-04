@@ -6,18 +6,9 @@ from Utility import *
 class Category:
 
     # Name of the category
-    def __init__(self, name: str, title: str, kind: str, id: str, tag: str, budget: bool):
+    def __init__(self, category_name: str):
         # Name of the table ex. dining
-        self.name = name
-        # Name of the title column ex. dining_name
-        self.title = title
-        # Name of the type column ex. dining_type
-        self.kind = kind
-        # Name of the pk column ex. dining_id
-        self.id = id
-        # Name of the join table ex. dining_tag
-        self.tag = tag
-        self.has_budget = budget
+        self.name = category_name
         self.amount = 0
         self.include = False
         self.types = []
@@ -62,12 +53,12 @@ class Category:
                 print(LINE)
                 break
             elif choice == 'sample':
-                ideas = sample_type(cursor, self.name, self.kind)
+                ideas = sample_types(cursor, self.name)
                 for i in range(len(ideas)):
                     print(ideas[i])
                 print(LINE)
             else:
-                pk = get_pk(cursor, self.name, self.kind, choice, self.id)
+                pk = get_pk(cursor, 'place', 'type', choice, 'place_id', self.name)
                 if pk is None:
                     print("No " + self.name + " of type " + choice)
                     print(LINE)
@@ -88,13 +79,12 @@ class Category:
                 print(LINE)
                 break
             elif choice == 'sample':
-                ideas = sample_features(cursor, self.name, self.tag, self.id)
+                ideas = sample_features(cursor, self.name)
                 for i in range(len(ideas)):
                     print(ideas[i])
                 print(LINE)
             else:
-                pk = get_feature_pk(cursor, self.name, self.tag, self.id,
-                                    "feature_name", choice, "feature_id")
+                pk = get_feature_pk(cursor, self.name, choice)
                 if pk is None:
                     print("No " + self.name + " with feature " + choice)
                     print(LINE)
@@ -108,12 +98,5 @@ class Category:
     #  budget: string of 1 to 4 '$' signs (ex. '$$$')
     # Returns a list of the recommended activities
     def recommend_category(self, cursor: 'mysql.connector.connection', budget: str) -> list:
-        # The budget column only exists in certain tables!
-        if self.has_budget:
-            # Fill in optional parameter with budget from the questionnaire
-            return recommend_activity(cursor, self.name, self.title, self.kind, self.tag, self.id,
-                                      self.types, self.features, self.amount, budget)
-        else:
-            # Ignore optional parameter since there is np budget for this table
-            return recommend_activity(cursor, self.name, self.title, self.kind, self.tag, self.id,
-                                      self.types, self.features, self.amount)
+        # Fill in optional parameter with budget from the questionnaire
+        return recommend_activity(cursor, self.name, self.types, self.features, self.amount, budget)

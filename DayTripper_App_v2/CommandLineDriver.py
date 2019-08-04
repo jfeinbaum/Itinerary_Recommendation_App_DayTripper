@@ -3,6 +3,11 @@ from Questionnaire import *
 
 # Command Line Program Driver
 def main():
+    # Prepare a connection for the app
+    cnx = est_connection()
+
+    # LOGIN GOES HERE
+
     while True:
         # LAUNCH SCREEN: Select to answer questions or skip to workspace
         print("------ DayTripper ------")
@@ -16,7 +21,7 @@ def main():
             print("Please answer the following questions.")
             print(LINE)
             # Questionnaire
-            quest = Questionnaire()
+            quest = Questionnaire(cnx)
             # Complete the survey information
             quest.select_city()
             quest.select_budget()
@@ -28,11 +33,11 @@ def main():
             formatted = format_itinerary(ordered, times)
             save(formatted, 'MyItinerary.txt')
             print(formatted)
-            # Close the connection
-            quest.cnx.close()
 
         # View template itineraries
         elif int(response) == 2:
+            # Another object?
+
             # 1. View My Itineraries
             #   -> List of itineraries with descriptions from that user
             #   -> Select index to: Print, Save, or Open in workspace
@@ -57,8 +62,14 @@ def main():
             # 5. Discard itinerary and quit
             #      -> End the program (or go back to main menu)
             pass
+
+        # Exit the program
         elif int(response) == 4:
+            # Close the connection & exit
+            cnx.close()
             break
+
+        # Catch-all for invalid inputs
         else:
             print('Unrecognized command, please select a number from the menu.')
 
