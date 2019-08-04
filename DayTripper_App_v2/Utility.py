@@ -294,26 +294,23 @@ def print_itinerary(itinerary: list, times: list) -> None:
         print(formatted_itinerary[i])
         print('\t\t|\n\t\t|\t' + str(times[i]) + ' minutes' + '\n\t\t|\n\t\tv')
     print(formatted_itinerary[-1])
-
+  
 
 # Function to generate a string of the itinerary in a readable format
 #  itinerary: list of recommended activities, use the output from recommend_activity())
 #  times: list of travel times, use output from get_travel_times()
 # Returns string of the itinerary in readable format
 def format_itinerary(itinerary: list, times: list) -> str:
+
     cat = ""
     formatted_itinerary = []
     for i in range(len(itinerary)):
         entry = itinerary[i]
         name = entry[1]
-        type = entry[2]
-        rating = str(entry[3])
-        if entry[0] == 'dining' or entry[0] == 'entertainment':
-            description = entry[5]
-        else:
-            description = entry[4]
+        type = entry[3]
+        rating = str(entry[4])
+        description = entry[7]
         formatted_entry = name + '\n\t' + type + '\n\tRating: ' + rating + '\n\t' + description.strip() + '\n'
-
         formatted_itinerary.append(formatted_entry)
     for i in range(len(formatted_itinerary) - 1):
         cat += formatted_itinerary[i]
