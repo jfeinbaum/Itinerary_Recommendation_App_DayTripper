@@ -7,20 +7,32 @@ def main():
     cnx = est_connection()
 
     # LOGIN GOES HERE
-        while True:
+    while True:
         print("------ DayTripper ------")
         response = input("Select an option:\n"
                      " - 1. Login\n"
                      " - 2. Register\n")
-        if int(response) == 2:
-            username = input("Enter a new username: ")
-            password = input("Enter a new password: ")
-            if register_user(cnx, username, password):
-                print("Successfully registered " + username+"\n")
-                break
-            else:
-                print("Username taken\n")
+        if int(response) == 1:
+            while True:
+                username = input("Username: ")
+                password = input("Password: ")
+                if verify_login(cnx, username, password):
+                    print("Logged in as " + username + "\n")
+                    break
+                else:
+                    print("Invalid username or password\n")
 
+        elif int(response) == 2:
+            while True:
+                username = input("Enter a new username: ")
+                password = input("Enter a new password: ")
+                if register_user(cnx, username, password):
+                    print("Successfully registered " + username+"\n")
+                    break
+                else:
+                    print("Username taken\n")
+        break
+        
     while True:
         # LAUNCH SCREEN: Select to answer questions or skip to workspace
         print("------ DayTripper ------")
