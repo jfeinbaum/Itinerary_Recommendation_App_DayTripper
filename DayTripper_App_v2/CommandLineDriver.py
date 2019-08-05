@@ -80,6 +80,9 @@ def main():
                                  " - 2. View All Itineraries\n")
                 if int(response) == 1:
                     my_itineraries = get_my_itineraries(cnx, username)
+                    if len(my_itineraries) == 0:
+                        print("You don't have any itineraries\n")
+                        break
                     print("My Itineraries:\n")
                     for i in range(len(my_itineraries)):
                         print(str(i+1)+". "+ my_itineraries[i][1])
