@@ -31,8 +31,9 @@ def main():
                     break
                 else:
                     print("Username taken\n")
+
         break
-        
+
     while True:
         # LAUNCH SCREEN: Select to answer questions or skip to workspace
         print("------ DayTripper ------")
@@ -40,7 +41,7 @@ def main():
                          " - 1. Recommend a Trip\n"
                          " - 2. View Itineraries\n"
                          " - 3. Workspace\n"
-                         " - 4. Quit\n")
+                         " - 4. Logout\n")
         # Open the questionnaire
         if int(response) == 1:
             print("Please answer the following questions.")
@@ -63,6 +64,7 @@ def main():
             insert_itinerary(cnx, ordered, username, desc)
             print()
 
+
         # View template itineraries
         elif int(response) == 2:
             # Another object?
@@ -72,7 +74,35 @@ def main():
             #   -> Select index to: Print, Save, or Open in workspace
             # 2. View All itineraries
             #   -> Same as above, maybe limit to 10 randomly selected
-            pass
+            while True:
+                response = input("Select an option:\n"
+                                 " - 1. View My Itineraries\n"
+                                 " - 2. View All Itineraries\n")
+                if int(response) == 1:
+                    my_itineraries = get_my_itineraries(cnx, username)
+                    print("My Itineraries:\n")
+                    for i in range(len(my_itineraries)):
+                        print(str(i+1)+". "+ my_itineraries[i][1])
+                    print()
+                    itin_id = str(int(input("Select an itinerary to view: ")) - 1)
+                    itin_to_view = get_an_itinerary(cnx, itin_id)
+                    print(itin_to_view)
+                    print(LINE)
+
+                elif int(response) == 2:
+                    all_itineraries = get_random_itineraries(cnx)
+                    print("Random Itineraries (up to 10):\n")
+                    for i in range(len(all_itineraries)):
+                        print(str(i+1)+". "+all_itineraries[i][1]+" -- by user: "+all_itineraries[i][2])
+                    print()
+                    itin_id = str(int(input("Select an itinerary to view: ")) - 1)
+                    itin_to_view = get_an_itinerary(cnx, itin_id)
+                    print(itin_to_view)
+                    print(LINE)
+
+
+
+                break
 
         # Open the workspace
         elif int(response) == 3:
