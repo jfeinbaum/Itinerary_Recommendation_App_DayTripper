@@ -69,7 +69,7 @@ def main():
         elif int(response) == 2:
             # Another object?
 
-            # 1. View My Itineraries
+                        # 1. View My Itineraries
             #   -> List of itineraries with descriptions from that user
             #   -> Select index to: Print, Save, or Open in workspace
             # 2. View All itineraries
@@ -84,7 +84,8 @@ def main():
                     for i in range(len(my_itineraries)):
                         print(str(i+1)+". "+ my_itineraries[i][1])
                     print()
-                    itin_id = str(int(input("Select an itinerary to view: ")) - 1)
+                    itin_id = input("Select an itinerary to view: ")
+
                     itin_to_view = get_an_itinerary(cnx, itin_id)
                     print(itin_to_view)
                     print(LINE)
@@ -95,7 +96,7 @@ def main():
                     for i in range(len(all_itineraries)):
                         print(str(i+1)+". "+all_itineraries[i][1]+" -- by user: "+all_itineraries[i][2])
                     print()
-                    itin_id = str(int(input("Select an itinerary to view: ")) - 1)
+                    itin_id = input("Select an itinerary to view: ")
                     itin_to_view = get_an_itinerary(cnx, itin_id)
                     print(itin_to_view)
                     print(LINE)
