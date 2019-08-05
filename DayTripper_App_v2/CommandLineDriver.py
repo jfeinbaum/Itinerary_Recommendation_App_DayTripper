@@ -95,6 +95,9 @@ def main():
 
                 elif int(response) == 2:
                     all_itineraries = get_random_itineraries(cnx)
+                    if len(all_itineraries) == 0:
+                        print("There are no itineraries\n")
+                        break
                     print("Random Itineraries (up to 10):\n")
                     for i in range(len(all_itineraries)):
                         print(str(i+1)+". "+all_itineraries[i][1]+" -- by user: "+all_itineraries[i][2])
