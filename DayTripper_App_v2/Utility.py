@@ -393,4 +393,47 @@ def register_user(cnx: 'mysql.connector.connection',
         return True
     else:
         return False
+    
+    
+def get_my_itineraries(cnx: 'mysql.connector.connection',
+            username: str) -> list:
+    itineraries = []
+    cursor = cnx.cursor()
+    user_id = str(get_pk(cursor, "user", "user_name", username, "user_id"))
+    query = "select itinerary_id, description from itinerary where user_id =%s"
+    cursor.execute(query, (user_id,))
+    for row in cursor:
+        itineraries.append(row)
+    return itineraries
+
+
+def get_an_itinerary(cnx: 'mysql.connector.connection',
+            itin_id: str) -> list:
+    itinerary = []
+    cursor = cnx.cursor()
+    query = "select * from place join activity using (place_id) where itinerary_id =%s order by ordering"
+    cursor.execute(query, (itin_id,))
+    for row in cursor:
+        row = row[:-2]
+        itinerary.append(row)
+    times = get_travel_times(itinerary)
+    formatted = format_itinerary(itinerary, times)
+    return formatted
+
+
+def get_random_itineraries(cnx: 'mysql.connector.connection') -> list:
+    itineraries = []
+    cursor = cnx.cursor()
+    query = "select itinerary_id, description, user_name from itinerary join user using (user_id)"
+    cursor.execute(query, ())
+    for row in cursor:
+        itineraries.append(row)
+    smaller_list = []
+    for i in range(10):
+        x = random.randint(0, len(itineraries) - 1)
+        if itineraries[x] not in smaller_list:
+            smaller_list.append(itineraries[x])
+    return smaller_list
+
+
 
