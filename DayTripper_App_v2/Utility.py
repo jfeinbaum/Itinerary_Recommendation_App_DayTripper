@@ -282,11 +282,11 @@ def print_itinerary(itinerary: list, times: list) -> None:
         entry = itinerary[i]
         name = entry[1]
         type = entry[2]
-        rating = str(entry[3])
+        rating = str(entry[4])
         if entry[0] == 'dining' or entry[0] == 'entertainment':
-            description = entry[5]
+            description = entry[6].strip()
         else:
-            description = entry[4]
+            description = entry[5].strip()
         formatted_entry = name+'\n\t'+type+'\n\tRating: '+rating+'\n\t'+description
 
         formatted_itinerary.append(formatted_entry)
@@ -301,16 +301,15 @@ def print_itinerary(itinerary: list, times: list) -> None:
 #  times: list of travel times, use output from get_travel_times()
 # Returns string of the itinerary in readable format
 def format_itinerary(itinerary: list, times: list) -> str:
-
     cat = ""
     formatted_itinerary = []
     for i in range(len(itinerary)):
         entry = itinerary[i]
         name = entry[1]
-        type = entry[3]
-        rating = str(entry[4])
+        type = entry[2]
+        rating = str(entry[3])
         description = entry[7]
-        formatted_entry = name + '\n\t' + type + '\n\tRating: ' + rating + '\n\t' + description.strip() + '\n'
+        formatted_entry = name + '\n\t' + type + '\n\tRating: ' + rating + '\n\t' + str(description).strip() + '\n'
         formatted_itinerary.append(formatted_entry)
     for i in range(len(formatted_itinerary) - 1):
         cat += formatted_itinerary[i]
@@ -339,7 +338,7 @@ def save(formatted_itinerary: str, filename: str) -> None:
 #  description: str, the description to be saved along with this itinerary
 # Returns nothing
 def insert_itinerary(cnx: 'mysql.connector.connection',
-           itinerary: list, username: str, description: str) -> None:
+                     itinerary: list, username: str, description: str) -> None:
     cursor = cnx.cursor()
     user_id = str(get_pk(cursor, "user", "user_name", username, "user_id"))
     itinerary_query = "insert into itinerary (user_id, description) value (%s,%s)"
@@ -356,8 +355,10 @@ def insert_itinerary(cnx: 'mysql.connector.connection',
         
         
 # Function to check if a user exists in the database
-def check_user_exists(cursor: 'mysql.connector.connection',
-                      username: str) -> bool:
+#  cursor: cursor connection to the database
+#  username: string, the username of the user
+# Returns true if the user exists, otherwise false
+def check_user_exists(cursor: 'mysql.connector.connection', username: str) -> bool:
     query = "select count(*) from user where user_name =%s"
     cursor.execute(query, (username,))
     for row in cursor:
@@ -367,8 +368,12 @@ def check_user_exists(cursor: 'mysql.connector.connection',
 
 
 # Function to check if the username and password are valid
+#  cnx: connection to the database
+#  username: string, the username of the user
+#  password: string, the user password
+# Returns true if the credentials are valid, otherwise false
 def verify_login(cnx: 'mysql.connector.connection',
-           username: str, password: str, ) -> bool:
+                 username: str, password: str, ) -> bool:
     cursor = cnx.cursor()
     exists = check_user_exists(cursor, username)
     if exists:
@@ -382,8 +387,12 @@ def verify_login(cnx: 'mysql.connector.connection',
 
 
 # Function to register a new user into the database
+#  cnx: cursor connection to the database
+#  username: string, the username of the user
+#  password: string, the user password
+# Returns true if the registration succeeded, otherwise false
 def register_user(cnx: 'mysql.connector.connection',
-           username: str, password: str, ) -> bool:
+                  username: str, password: str, ) -> bool:
     cursor = cnx.cursor()
     if not check_user_exists(cursor, username):
         query = "insert into user (user_name, password) value (%s,%s)"
@@ -394,9 +403,12 @@ def register_user(cnx: 'mysql.connector.connection',
     else:
         return False
     
-    
-def get_my_itineraries(cnx: 'mysql.connector.connection',
-            username: str) -> list:
+
+# Function to find the itineraries associated with a user
+#  cnx: connection to the database
+#  username: string, the username of the user
+# Returns a list of itinerary descriptions
+def get_my_itineraries(cnx: 'mysql.connector.connection', username: str) -> list:
     itineraries = []
     cursor = cnx.cursor()
     user_id = str(get_pk(cursor, "user", "user_name", username, "user_id"))
@@ -407,8 +419,11 @@ def get_my_itineraries(cnx: 'mysql.connector.connection',
     return itineraries
 
 
-def get_an_itinerary(cnx: 'mysql.connector.connection',
-            itin_id: str) -> list:
+# Function to get an itinerary using its id
+#  cnx: connection to the database
+#  itin_id: primary key for an itinerary
+# Returns a list of places in a specific order that corresponds to the itinerary
+def get_an_itinerary(cnx: 'mysql.connector.connection', itin_id: str) -> list:
     itinerary = []
     cursor = cnx.cursor()
     query = "select * from place join activity using (place_id) where itinerary_id =%s order by ordering"
@@ -421,6 +436,9 @@ def get_an_itinerary(cnx: 'mysql.connector.connection',
     return formatted
 
 
+# Function to randomly select itineraries from the database
+#  cnx: connection to the database
+# Returns a list of itineraries (id, description, user who created it)
 def get_random_itineraries(cnx: 'mysql.connector.connection') -> list:
     itineraries = []
     cursor = cnx.cursor()

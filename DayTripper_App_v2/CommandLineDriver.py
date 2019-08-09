@@ -57,7 +57,7 @@ def main():
             ordered = order_itinerary(itinerary)
             times = get_travel_times(ordered)
             formatted = format_itinerary(ordered, times)
-            print(formatted)
+            print_itinerary(ordered, times)
             print(LINE)
             desc = input("Enter a description to save this itinerary: ")
             save(formatted, 'MyItinerary.txt')
